@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 // import * as BooksAPI from './BooksAPI'
 import "./App.css";
+import books from "./books.json";
 
 class BooksApp extends React.Component {
   state = {
@@ -21,7 +22,7 @@ class BooksApp extends React.Component {
         ) : (
           <div>
             <ListBookTitle />
-            <ListBookContent />
+            <ListBookContent books={books} />
             <ButtonAddBook />
           </div>
         )}
@@ -32,58 +33,84 @@ class BooksApp extends React.Component {
 
 class BookshelfBooks extends Component {
   render() {
+    const { book } = this.props;
+    console.log(book);
     return (
-      <div className="book">
-        <div className="book-top">
-          <div
-            className="book-cover"
-            style={{
-              width: 128,
-              height: 192,
-              backgroundImage:
-                'url("http://books.google.com/books/content?id=32haAAAAMAAJ&printsec=frontcover&img=1&zoom=1&imgtk=AFLRE72yckZ5f5bDFVIf7BGPbjA0KYYtlQ__nWB-hI_YZmZ-fScYwFy4O_fWOcPwf-pgv3pPQNJP_sT5J_xOUciD8WaKmevh1rUR-1jk7g1aCD_KeJaOpjVu0cm_11BBIUXdxbFkVMdi&source=gbs_api")',
-            }}
-          ></div>
-          <div className="book-shelf-changer">
-            <select>
-              <option value="move" disabled>
-                Move to...
-              </option>
-              <option value="currentlyReading">Currently Reading</option>
-              <option value="wantToRead">Want to Read</option>
-              <option value="read">Read</option>
-              <option value="none">None</option>
-            </select>
+      <li>
+        <div className="book">
+          <div className="book-top">
+            <div
+              className="book-cover"
+              style={{
+                width: 128,
+                height: 192,
+                backgroundImage: `url(${book.imageLinks.thumbnail})`,
+              }}
+            ></div>
+            <div className="book-shelf-changer">
+              <select>
+                <option value="move" disabled>
+                  Move to...
+                </option>
+                <option value="currentlyReading">Currently Reading</option>
+                <option value="wantToRead">Want to Read</option>
+                <option value="read">Read</option>
+                <option value="none">None</option>
+              </select>
+            </div>
           </div>
+          <div className="book-title">{book.title}</div>
+          <div className="book-authors">{book.authors}</div>
         </div>
-        <div className="book-title">The Adventures of Tom Sawyer</div>
-        <div className="book-authors">Mark Twain</div>
-      </div>
+      </li>
     );
   }
 }
-class Bookshelf extends Component {
+class BookshelfTitle extends Component {
   render() {
-    return (
-      <div className="bookshelf">
-        <h2 className="bookshelf-title">Currently Reading</h2>
-        <div className="bookshelf-books">
-          <ol className="books-grid">
-            <li>
-              <BookshelfBooks />
-            </li>
-          </ol>
-        </div>
-      </div>
-    );
+    const { shelf } = this.props;
+    return <h2 className="bookshelf-title">{shelf}</h2>;
   }
 }
 
+// class BookshelfList extends Component {
+//   render() {
+//     return (
+//       <div className="bookshelf-books">
+//         <ol className="books-grid">
+//           <BookshelfBooks book={book} key={book.id} />
+//         </ol>
+//       </div>
+//     );
+//   }
+// }
+
 class ListBookContent extends Component {
   render() {
+    const bookShelves = [];
+    // const bookList = [];
+    let currentShelf = "";
+    const { books } = this.props;
+    const allbooks = books.books;
+
+    allbooks.forEach((book, index) => {
+      if (book.shelf !== currentShelf) {
+        bookShelves.push(<BookshelfTitle shelf={book.shelf} key={index} />);
+      }
+
+      bookShelves.push(
+        <div className="bookshelf-books">
+          <ol className="books-grid">
+            <BookshelfBooks book={book} key={book.id} />
+          </ol>
+        </div>
+      );
+      currentShelf = book.shelf;
+    });
+    console.log(bookShelves);
     return (
       <div className="list-books-content">
-        <Bookshelf />
+        <div className="bookshelf">{bookShelves}</div>
       </div>
     );
   }
