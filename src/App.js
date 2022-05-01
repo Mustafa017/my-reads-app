@@ -33,36 +33,39 @@ class BooksApp extends React.Component {
 
 class BookshelfBooks extends Component {
   render() {
-    const { book } = this.props;
-    console.log(book);
+    const { books } = this.props;
     return (
-      <li>
-        <div className="book">
-          <div className="book-top">
-            <div
-              className="book-cover"
-              style={{
-                width: 128,
-                height: 192,
-                backgroundImage: `url(${book.imageLinks.thumbnail})`,
-              }}
-            ></div>
-            <div className="book-shelf-changer">
-              <select>
-                <option value="move" disabled>
-                  Move to...
-                </option>
-                <option value="currentlyReading">Currently Reading</option>
-                <option value="wantToRead">Want to Read</option>
-                <option value="read">Read</option>
-                <option value="none">None</option>
-              </select>
+      <ol className="books-grid">
+        {books.map((book, index) => (
+          <li key={index}>
+            <div className="book">
+              <div className="book-top">
+                <div
+                  className="book-cover"
+                  style={{
+                    width: 128,
+                    height: 192,
+                    backgroundImage: `url(${book.imageLinks.thumbnail})`,
+                  }}
+                ></div>
+                <div className="book-shelf-changer">
+                  <select>
+                    <option value="move" disabled>
+                      Move to...
+                    </option>
+                    <option value="currentlyReading">Currently Reading</option>
+                    <option value="wantToRead">Want to Read</option>
+                    <option value="read">Read</option>
+                    <option value="none">None</option>
+                  </select>
+                </div>
+              </div>
+              <div className="book-title">{book.title}</div>
+              <div className="book-authors">{book.authors}</div>
             </div>
-          </div>
-          <div className="book-title">{book.title}</div>
-          <div className="book-authors">{book.authors}</div>
-        </div>
-      </li>
+          </li>
+        ))}
+      </ol>
     );
   }
 }
@@ -73,44 +76,35 @@ class BookshelfTitle extends Component {
   }
 }
 
-// class BookshelfList extends Component {
-//   render() {
-//     return (
-//       <div className="bookshelf-books">
-//         <ol className="books-grid">
-//           <BookshelfBooks book={book} key={book.id} />
-//         </ol>
-//       </div>
-//     );
-//   }
-// }
-
 class ListBookContent extends Component {
   render() {
-    const bookShelves = [];
-    // const bookList = [];
+    const Shelves = [];
     let currentShelf = "";
     const { books } = this.props;
     const allbooks = books.books;
 
-    allbooks.forEach((book, index) => {
+    allbooks.forEach((book) => {
       if (book.shelf !== currentShelf) {
-        bookShelves.push(<BookshelfTitle shelf={book.shelf} key={index} />);
+        Shelves.push(book.shelf);
       }
-
-      bookShelves.push(
-        <div className="bookshelf-books">
-          <ol className="books-grid">
-            <BookshelfBooks book={book} key={book.id} />
-          </ol>
-        </div>
-      );
       currentShelf = book.shelf;
     });
-    console.log(bookShelves);
+
     return (
       <div className="list-books-content">
-        <div className="bookshelf">{bookShelves}</div>
+        {Shelves.map((shelf, index) => (
+          <div className="bookshelf" key={index}>
+            <BookshelfTitle shelf={shelf} key={index} />
+            <div className="bookshelf-books">
+              <BookshelfBooks
+                books={allbooks.filter(
+                  (book) => book.shelf.toLowerCase() === shelf.toLowerCase()
+                )}
+              />
+            </div>
+          </div>
+        ))}
+        /
       </div>
     );
   }
