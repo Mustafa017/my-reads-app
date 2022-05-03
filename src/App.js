@@ -14,16 +14,23 @@ class BooksApp extends React.Component {
     showSearchPage: false,
   };
 
+  showSearch = (showSearchPage) => {
+    this.setState({ showSearchPage: true });
+  };
+
+  closeSearch = (showSearchPage) => {
+    this.setState({ showSearchPage: false });
+  };
   render() {
     return (
       <div className="app">
         {this.state.showSearchPage ? (
-          <SearchBook />
+          <SearchBook searchpage={this.closeSearch} />
         ) : (
           <div>
             <ListBookTitle />
             <ListBookContent books={books} />
-            <ButtonAddBook />
+            <ButtonAddBook searchpage={this.showSearch} />
           </div>
         )}
       </div>
@@ -121,11 +128,10 @@ class ListBookTitle extends Component {
 
 class ButtonAddBook extends Component {
   render() {
+    const { searchpage } = this.props;
     return (
       <div className="open-search">
-        <button onClick={() => this.setState({ showSearchPage: true })}>
-          Add a book
-        </button>
+        <button onClick={() => searchpage()}>Add a book</button>
       </div>
     );
   }
@@ -133,12 +139,10 @@ class ButtonAddBook extends Component {
 
 class SearchBookBar extends Component {
   render() {
+    const { searchpage } = this.props;
     return (
       <div className="search-books-bar">
-        <button
-          className="close-search"
-          onClick={() => this.setState({ showSearchPage: false })}
-        >
+        <button className="close-search" onClick={() => searchpage()}>
           Close
         </button>
         <div className="search-books-input-wrapper">
@@ -169,9 +173,10 @@ class SearchBookResults extends Component {
 
 class SearchBook extends Component {
   render() {
+    const { searchpage } = this.props;
     return (
       <div className="search-books">
-        <SearchBookBar />
+        <SearchBookBar searchpage={searchpage} />
         <SearchBookResults />
       </div>
     );
