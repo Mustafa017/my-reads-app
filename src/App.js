@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import * as BooksAPI from "./BooksAPI";
 import "./App.css";
+import serializeForm from "form-serialize";
 
 class BooksApp extends React.Component {
   state = {
@@ -20,18 +21,26 @@ class BooksApp extends React.Component {
     });
   }
 
-  showSearch = (showSearchPage) => {
+  searchBook(book) {
+    BooksAPI.search(book).then((books) => this.setState({ books }));
+  }
+
+  showSearch = () => {
     this.setState({ showSearchPage: true });
   };
 
-  closeSearch = (showSearchPage) => {
+  closeSearch = () => {
     this.setState({ showSearchPage: false });
   };
   render() {
     return (
       <div className="app">
         {this.state.showSearchPage ? (
-          <SearchBook searchpage={this.closeSearch} />
+          <SearchBook
+            searchpage={this.closeSearch}
+            onSearchBook={(book) => this.searchBook(book)}
+            books={this.state.books}
+          />
         ) : (
           <div>
             <ListBookTitle />
@@ -144,6 +153,15 @@ class ButtonAddBook extends Component {
 }
 
 class SearchBookBar extends Component {
+  handleSubmit = (e) => {
+    e.preventDefault();
+    const val = serializeForm(e.target, { hash: true });
+    // console.log(val);
+
+    if (this.props.searchbook) {
+      this.props.searchbook(val);
+    }
+  };
   render() {
     const { searchpage } = this.props;
     return (
@@ -160,7 +178,13 @@ class SearchBookBar extends Component {
           However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
           you don't find a specific author or title. Every search is limited by search terms.
         */}
-          <input type="text" placeholder="Search by title or author" />
+          <form onSubmit={this.handleSubmit}>
+            <input
+              type="text"
+              name="query"
+              placeholder="Search by title or author"
+            />
+          </form>
         </div>
       </div>
     );
@@ -169,9 +193,10 @@ class SearchBookBar extends Component {
 
 class SearchBookResults extends Component {
   render() {
+    const { books } = this.props;
     return (
       <div className="search-books-results">
-        <ol className="books-grid"></ol>
+        <BookshelfBooks books={books} />
       </div>
     );
   }
@@ -179,11 +204,11 @@ class SearchBookResults extends Component {
 
 class SearchBook extends Component {
   render() {
-    const { searchpage } = this.props;
+    const { searchpage, onSearchBook, books } = this.props;
     return (
       <div className="search-books">
-        <SearchBookBar searchpage={searchpage} />
-        <SearchBookResults />
+        <SearchBookBar searchpage={searchpage} searchbook={onSearchBook} />
+        <SearchBookResults books={books} />
       </div>
     );
   }
