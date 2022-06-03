@@ -6,7 +6,7 @@ class ListBookContent extends Component {
   render() {
     const Shelves = [];
     let currentShelf = "";
-    const { books } = this.props;
+    const { books, onUpdateShelf } = this.props;
     const allbooks = books;
 
     allbooks.forEach((book) => {
@@ -30,6 +30,7 @@ class ListBookContent extends Component {
                   books={allbooks.filter(
                     (book) => book.shelf.toLowerCase() === shelf.toLowerCase()
                   )}
+                  onUpdateBookShelf={onUpdateShelf}
                 />
               </div>
             </div>

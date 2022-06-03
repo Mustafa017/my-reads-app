@@ -1,12 +1,24 @@
 import { React, Component } from "react";
 
 class BookshelfBooks extends Component {
+  handleSelect = (e, book) => {
+    let shelf = e.target.value;
+    // console.log(shelf);
+    // console.log(book);
+    if (shelf !== "none") {
+      if (this.props.onUpdateBookShelf) {
+        this.props.onUpdateBookShelf(book, shelf);
+      }
+    }
+  };
+
   render() {
     const { books } = this.props;
+
     return (
       <ol className="books-grid">
-        {books.map((book, index) => (
-          <li key={index}>
+        {books.map((book) => (
+          <li key={book.id}>
             <div className="book">
               <div className="book-top">
                 <div
@@ -18,10 +30,14 @@ class BookshelfBooks extends Component {
                   }}
                 ></div>
                 <div className="book-shelf-changer">
-                  <select>
+                  <select
+                    id={book.id}
+                    onChange={(e) => this.handleSelect(e, book)}
+                  >
                     <option value="move" disabled>
                       Move to...
                     </option>
+                    <option value="currentlyReading">Currently Reading</option>
                     <option value="currentlyReading">Currently Reading</option>
                     <option value="wantToRead">Want to Read</option>
                     <option value="read">Read</option>

@@ -18,10 +18,17 @@ class BooksApp extends Component {
   };
 
   componentDidMount() {
+    this.getBooks();
+  }
+
+  getBooks = () => {
     BooksAPI.getAll().then((books) => {
       this.setState({ books });
     });
-  }
+  };
+  updateBook = (book, shelf) => {
+    BooksAPI.update(book, shelf).then(() => this.getBooks());
+  };
 
   searchBook(book) {
     BooksAPI.search(book).then((books) => this.setState({ books }));
@@ -45,7 +52,10 @@ class BooksApp extends Component {
           />
         ) : (
           <div>
-            <ListBookContent books={this.state.books} />
+            <ListBookContent
+              books={this.state.books}
+              onUpdateShelf={this.updateBook}
+            />
             <ButtonAddBook searchpage={this.showSearch} />
           </div>
         )}
