@@ -1,14 +1,12 @@
 import { React, Component } from "react";
 import SearchBookBar from "./SearchBookBar";
-import SearchBookResults from "./SearchBookResults";
 
 class SearchBook extends Component {
   render() {
-    const { searchpage, onSearchBook, books } = this.props;
+    const { searchpage } = this.props;
     return (
       <div className="search-books">
-        <SearchBookBar searchpage={searchpage} searchbook={onSearchBook} />
-        <SearchBookResults books={books} />
+        <SearchBookBar searchpage={searchpage} />
       </div>
     );
   }
