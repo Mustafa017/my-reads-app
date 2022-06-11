@@ -1,9 +1,10 @@
 import React, { Component } from "react";
+import { Routes, Route } from "react-router-dom";
 import * as BooksAPI from "./BooksAPI";
 import "./App.css";
-import SearchBook from "./components/SearchBook";
 import ListBookContent from "./components/ListBookContent";
 import ButtonAddBook from "./components/ButtonAddBook";
+import SearchBookBar from "./components/SearchBookBar";
 
 class BooksApp extends Component {
   state = {
@@ -26,13 +27,10 @@ class BooksApp extends Component {
       this.setState({ books });
     });
   };
+
   updateBook = (book, shelf) => {
     BooksAPI.update(book, shelf).then(() => this.getBooks());
   };
-
-  searchBook(book) {
-    BooksAPI.search(book).then((books) => this.setState({ books }));
-  }
 
   showSearch = () => {
     this.setState({ showSearchPage: true });
@@ -44,21 +42,33 @@ class BooksApp extends Component {
   render() {
     return (
       <div className="app">
-        {this.state.showSearchPage ? (
-          <SearchBook
-            searchpage={this.closeSearch}
-            onSearchBook={(book) => this.searchBook(book)}
-            books={this.state.books}
-          />
-        ) : (
-          <div>
-            <ListBookContent
-              books={this.state.books}
-              onUpdateShelf={this.updateBook}
+        <Routes>
+          {this.state.showSearchPage ? (
+            <Route
+              path="/search"
+              element={
+                <SearchBookBar
+                  searchpage={this.closeSearch}
+                  addToShelf={this.updateBook}
+                />
+              }
             />
-            <ButtonAddBook searchpage={this.showSearch} />
-          </div>
-        )}
+          ) : (
+            <Route
+              path="/"
+              element={
+                <div>
+                  <ListBookContent
+                    books={this.state.books}
+                    onUpdateShelf={this.updateBook}
+                  />
+                  <ButtonAddBook searchpage={this.showSearch} />
+                  {/* {JSON.stringify(this.state)} */}
+                </div>
+              }
+            />
+          )}
+        </Routes>
       </div>
     );
   }
